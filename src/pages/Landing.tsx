@@ -1,17 +1,19 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Shield, Zap, Lock, Globe, MessageCircle, Video, Users, Sparkles } from 'lucide-react';
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const features = [
-    { icon: Lock, title: 'E2E Encryption', desc: 'Signal Protocol + MLS. Messages are unreadable to anyone, including us.' },
-    { icon: Zap, title: 'Real-time', desc: 'WebSocket + WebTransport. Sub-50ms latency worldwide.' },
-    { icon: Globe, title: 'Cross-platform', desc: 'Web, iOS, Android, Desktop. One account, everywhere.' },
-    { icon: Video, title: 'Video Calls', desc: 'WebRTC-based HD video with AI noise cancellation.' },
-    { icon: Users, title: 'Groups & Channels', desc: 'Up to 200K members. Threads, polls, reactions.' },
-    { icon: Sparkles, title: 'AI Assistant', desc: 'Summarize, translate, smart replies. Built-in.' },
+    { icon: Lock, title: t('landing.features.encryption'), desc: t('landing.features.encryptionDesc') },
+    { icon: Zap, title: t('landing.features.realtime'), desc: t('landing.features.realtimeDesc') },
+    { icon: Globe, title: t('landing.features.crossplatform'), desc: t('landing.features.crossplatformDesc') },
+    { icon: Video, title: t('landing.features.video'), desc: t('landing.features.videoDesc') },
+    { icon: Users, title: t('landing.features.groups'), desc: t('landing.features.groupsDesc') },
+    { icon: Sparkles, title: t('landing.features.ai'), desc: t('landing.features.aiDesc') },
   ];
 
   return (
@@ -30,24 +32,18 @@ export default function Landing() {
             <span className="text-xl font-bold gradient-text">Hyper</span>
           </motion.div>
           
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             <button onClick={() => navigate('/architecture')} className="text-sm text-zinc-400 hover:text-white transition-colors">
-              Architecture
+              {t('landing.nav.architecture')}
             </button>
-            <button onClick={() => navigate('/app')} className="text-sm text-zinc-400 hover:text-white transition-colors">
-              Demo App
-            </button>
-            <button 
-              onClick={() => navigate('/connect')}
-              className="text-sm text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5"
-            >
-              <span>Для разработчиков</span>
+            <button onClick={() => navigate('/connect')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+              {t('landing.nav.forDevelopers')}
             </button>
             <button 
-              onClick={() => navigate('/app')}
+              onClick={() => navigate('/login')}
               className="px-5 py-2 rounded-xl bg-hyper-600 hover:bg-hyper-500 text-white text-sm font-medium transition-all hover:scale-105"
             >
-              Open Messenger
+              {t('landing.nav.openMessenger')}
             </button>
           </nav>
         </div>
@@ -63,7 +59,7 @@ export default function Landing() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8">
               <Shield className="w-4 h-4 text-hyper-400" />
-              <span className="text-sm text-zinc-300">Military-grade encryption • Zero-knowledge architecture</span>
+              <span className="text-sm text-zinc-300">{t('landing.description')}</span>
             </div>
             
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
@@ -73,28 +69,27 @@ export default function Landing() {
             </h1>
             
             <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10">
-              The most secure, feature-rich messenger built with zero-trust architecture. 
-              End-to-end encrypted, cross-platform, AI-powered.
+              {t('landing.subtitle')}
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center">
               <button 
-                onClick={() => navigate('/app')}
+                onClick={() => navigate('/login')}
                 className="px-8 py-4 rounded-2xl bg-gradient-to-r from-hyper-600 to-purple-600 text-white font-semibold text-lg hover:scale-105 transition-all shadow-lg shadow-hyper-500/20"
               >
-                Launch Demo →
+                {t('landing.buttons.launchDemo')}
               </button>
               <button 
                 onClick={() => navigate('/architecture')}
                 className="px-8 py-4 rounded-2xl glass text-white font-semibold text-lg hover:scale-105 transition-all"
               >
-                View Architecture
+                {t('landing.buttons.viewArchitecture')}
               </button>
               <button 
                 onClick={() => navigate('/connect')}
                 className="px-8 py-4 rounded-2xl glass text-hyper-400 font-semibold text-lg hover:scale-105 transition-all border border-hyper-500/20"
               >
-                Для разработчиков
+                {t('landing.buttons.forDevelopers')}
               </button>
             </div>
           </motion.div>
@@ -109,7 +104,7 @@ export default function Landing() {
             whileInView={{ opacity: 1 }}
             className="text-3xl md:text-4xl font-bold text-center mb-16"
           >
-            Built for the <span className="gradient-text">future</span>
+            {t('landing.title')}
           </motion.h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -137,10 +132,10 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto glass-strong rounded-3xl p-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { value: 'E2EE', label: 'Encryption' },
-              { value: '<50ms', label: 'Latency' },
-              { value: '99.99%', label: 'Uptime' },
-              { value: '0', label: 'Data leaks' },
+              { value: 'E2EE', label: t('landing.stats.encryption') },
+              { value: '<50ms', label: t('landing.stats.latency') },
+              { value: '99.99%', label: t('landing.stats.uptime') },
+              { value: '0', label: t('landing.stats.dataLeaks') },
             ].map((s, i) => (
               <motion.div
                 key={i}
@@ -156,30 +151,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Architecture Teaser */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Enterprise Architecture</h2>
-          <p className="text-zinc-400 mb-8">
-            Microservices, event-driven, zero-trust. Built on Kubernetes with full observability.
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <button 
-              onClick={() => navigate('/architecture')}
-              className="px-6 py-3 rounded-xl glass text-hyper-400 hover:text-hyper-300 font-medium transition-colors"
-            >
-              Explore Full Architecture →
-            </button>
-            <button 
-              onClick={() => navigate('/connect')}
-              className="px-6 py-3 rounded-xl glass text-purple-400 hover:text-purple-300 font-medium transition-colors border border-purple-500/20"
-            >
-              Для разработчиков
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="py-10 px-6 border-t border-white/5">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -189,7 +160,7 @@ export default function Landing() {
             </div>
             <span className="font-bold gradient-text">Hyper</span>
           </div>
-          <p className="text-sm text-zinc-600">© 2026 Hyper Messenger. All rights reserved.</p>
+          <p className="text-sm text-zinc-600">{t('landing.footer')}</p>
         </div>
       </footer>
     </div>

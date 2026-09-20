@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAppContext } from '../App';
+// Admin auth is handled via sessionStorage
 import {
   Shield, Users, MessageCircle, BarChart3, Settings, Database,
   Bell, Globe, Lock, AlertTriangle, Activity, Server, Eye,
@@ -49,7 +49,10 @@ const auditLogs = [
 type Tab = 'dashboard' | 'users' | 'content' | 'system' | 'security' | 'analytics' | 'database' | 'audit';
 
 export default function AdminPanel() {
-  const { setIsAdminAuthenticated } = useAppContext();
+  const setIsAdminAuthenticated = (v: boolean) => {
+    if (v) sessionStorage.setItem('hyper_admin_auth', 'true');
+    else sessionStorage.removeItem('hyper_admin_auth');
+  };
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [sessionTimer, setSessionTimer] = useState(900); // 15 min
 

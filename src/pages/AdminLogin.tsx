@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../App';
 import { Shield, Key, Fingerprint, AlertTriangle, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const { setIsAdminAuthenticated } = useAppContext();
+  const setIsAdminAuthenticated = (v: boolean) => {
+    if (v) sessionStorage.setItem('hyper_admin_auth', 'true');
+    else sessionStorage.removeItem('hyper_admin_auth');
+  };
   const [step, setStep] = useState(1);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

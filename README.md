@@ -283,8 +283,8 @@ Proprietary - All rights reserved.
 ## 🔗 Ссылки
 
 - **Demo**: [hyper-messenger.vercel.app](https://hyper-messenger.vercel.app)
-- **Admin Panel**: `/hyper-admin-7x9k` (скрытый URL)
 - **Architecture Docs**: `/architecture`
+- **Developer Connection**: `/connect`
 
 ---
 
