@@ -1,0 +1,77 @@
+name: Deploy to Production Server
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ secrets.PRODUCTION_URL }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Deploy via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: "dist/*"
+          target: ${{ secrets.DEPLOY_PATH || '/var/www/hyper' }}
+          strip_components: 1
+          overwrite: true
+
+      - name: Run post-deploy commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH || '/var/www/hyper' }}
+            # Reload nginx
+            sudo systemctl reload nginx || true
+            # Clear cache if needed
+            # sudo systemctl restart php-fpm || true
+            echo "✅ Deployment completed successfully"
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ Deployment successful!"
+          # Add your notification here (Slack, Telegram, Discord, etc.)
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"✅ Hyper Messenger deployed successfully!"}' \
+          #   ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          # Add your notification here
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"❌ Hyper Messenger deployment failed!"}' \
+          #   ${{ secrets.SLACK_WEBHOOK }}

@@ -1,5 +1,64 @@
+# Dependencies
 node_modules/
-.next/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+*.lcov
+
+# Production
 dist/
 build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+
+# Temporary
+*.tmp
+*.temp
+.swiftpm/
+
+# Kubernetes secrets (NEVER commit)
+k8s/secrets/
+*.pem
+*.key
+
+# Docker
+.docker/
+
+# Misc
+.vercel
+.netlify
+.firebase
+.firebase-hosting-sources
