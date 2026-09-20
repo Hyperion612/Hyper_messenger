@@ -38,6 +38,12 @@ export default function Landing() {
               Demo App
             </button>
             <button 
+              onClick={() => navigate('/connect')}
+              className="text-sm text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5"
+            >
+              <span>Для разработчиков</span>
+            </button>
+            <button 
               onClick={() => navigate('/app')}
               className="px-5 py-2 rounded-xl bg-hyper-600 hover:bg-hyper-500 text-white text-sm font-medium transition-all hover:scale-105"
             >
@@ -83,6 +89,12 @@ export default function Landing() {
                 className="px-8 py-4 rounded-2xl glass text-white font-semibold text-lg hover:scale-105 transition-all"
               >
                 View Architecture
+              </button>
+              <button 
+                onClick={() => navigate('/connect')}
+                className="px-8 py-4 rounded-2xl glass text-hyper-400 font-semibold text-lg hover:scale-105 transition-all border border-hyper-500/20"
+              >
+                Для разработчиков
               </button>
             </div>
           </motion.div>
@@ -151,12 +163,20 @@ export default function Landing() {
           <p className="text-zinc-400 mb-8">
             Microservices, event-driven, zero-trust. Built on Kubernetes with full observability.
           </p>
-          <button 
-            onClick={() => navigate('/architecture')}
-            className="px-6 py-3 rounded-xl glass text-hyper-400 hover:text-hyper-300 font-medium transition-colors"
-          >
-            Explore Full Architecture →
-          </button>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <button 
+              onClick={() => navigate('/architecture')}
+              className="px-6 py-3 rounded-xl glass text-hyper-400 hover:text-hyper-300 font-medium transition-colors"
+            >
+              Explore Full Architecture →
+            </button>
+            <button 
+              onClick={() => navigate('/connect')}
+              className="px-6 py-3 rounded-xl glass text-purple-400 hover:text-purple-300 font-medium transition-colors border border-purple-500/20"
+            >
+              Для разработчиков
+            </button>
+          </div>
         </div>
       </section>
 

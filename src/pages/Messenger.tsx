@@ -5,8 +5,10 @@ import {
   MessageCircle, Search, Plus, Settings, Moon, Sun, Phone, Video,
   MoreVertical, Send, Smile, Paperclip, Mic, Image, Users, Hash,
   Shield, Check, CheckCheck, Star, Pin, Bell, Archive, ChevronLeft,
-  AtSign, Bot, Globe, Lock
+  AtSign, Bot, Globe, Lock, Database, CheckCircle
 } from 'lucide-react';
+import { isConnected, getCredentials } from '../lib/supabase';
+import { syncMessage, syncConversation, syncUser, loadMessages, getSyncStats } from '../lib/sync';
 
 interface Message {
   id: string;
@@ -68,11 +70,26 @@ export default function Messenger() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSidebar, setShowSidebar] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
+  const [syncStats, setSyncStats] = useState<{ users: number; conversations: number; messages: number } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const supabaseConnected = isConnected();
 
   useEffect(() => {
     if (selectedChat) {
       setMessages(mockMessages[selectedChat.id] || []);
+      // Load messages from Supabase if connected
+      if (supabaseConnected) {
+        loadMessages(selectedChat.id).then(dbMessages => {
+          if (dbMessages.length > 0) {
+            setMessages(dbMessages.map(m => ({
+              id: m.id || '',
+              text: m.content,
+              sender: 'other', // Simplified - in real app would check sender_id
+              time: new Date(m.created_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            })));
+          }
+        });
+      }
     }
   }, [selectedChat]);
 
@@ -80,7 +97,20 @@ export default function Messenger() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = () => {
+  // Load sync stats periodically
+  useEffect(() => {
+    if (supabaseConnected) {
+      const loadStats = async () => {
+        const stats = await getSyncStats();
+        setSyncStats(stats);
+      };
+      loadStats();
+      const interval = setInterval(loadStats, 30000); // Update every 30s
+      return () => clearInterval(interval);
+    }
+  }, [supabaseConnected]);
+
+  const sendMessage = async () => {
     if (!inputText.trim()) return;
     
     const newMsg: Message = {
@@ -94,6 +124,17 @@ export default function Messenger() {
     
     setMessages(prev => [...prev, newMsg]);
     setInputText('');
+
+    // Sync to Supabase if connected
+    if (supabaseConnected && selectedChat) {
+      await syncMessage({
+        conversation_id: selectedChat.id,
+        sender_id: 'current-user', // In real app, this would be the authenticated user's ID
+        content: inputText,
+        encrypted: true,
+        status: 'sent',
+      });
+    }
 
     // Simulate delivery
     setTimeout(() => {
@@ -156,6 +197,12 @@ export default function Messenger() {
                   <span className="font-bold gradient-text text-lg">Hyper</span>
                 </div>
                 <div className="flex items-center gap-1">
+                  {supabaseConnected && (
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-green-500/10 border border-green-500/20 mr-1" title="Connected to Supabase">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[10px] text-green-400">Synced</span>
+                    </div>
+                  )}
                   <button className="p-2 rounded-lg hover:bg-white/5 transition-colors">
                     <Plus className="w-4 h-4 text-zinc-400" />
                   </button>
@@ -177,6 +224,19 @@ export default function Messenger() {
                 />
               </div>
             </div>
+
+            {/* Sync Stats */}
+            {supabaseConnected && syncStats && (
+              <div className="px-4 py-2 border-b border-white/5 bg-hyper-500/5">
+                <div className="flex items-center justify-between text-[10px] text-zinc-500">
+                  <span className="flex items-center gap-1">
+                    <Database className="w-3 h-3" />
+                    Synced
+                  </span>
+                  <span>{syncStats.messages} msgs</span>
+                </div>
+              </div>
+            )}
 
             {/* Chat List */}
             <div className="flex-1 overflow-y-auto p-2">

@@ -5,6 +5,7 @@ import Messenger from './pages/Messenger';
 import AdminLogin from './pages/AdminLogin';
 import AdminPanel from './pages/AdminPanel';
 import Architecture from './pages/Architecture';
+import Connect from './pages/Connect';
 
 interface AppContextType {
   isAdminAuthenticated: boolean;
@@ -33,6 +34,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/app" element={<Messenger />} />
           <Route path="/architecture" element={<Architecture />} />
+          <Route path="/connect" element={<Connect />} />
           <Route path="/hyper-admin-7x9k" element={
             isAdminAuthenticated ? <AdminPanel /> : <AdminLogin />
           } />
