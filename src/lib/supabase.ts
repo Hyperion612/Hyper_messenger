@@ -10,12 +10,37 @@ export interface SupabaseCredentials {
 
 let supabaseInstance: SupabaseClient | null = null;
 
+// Safe localStorage wrapper
+function safeGetItem(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSetItem(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.error('Failed to save to localStorage:', e);
+  }
+}
+
+function safeRemoveItem(key: string): void {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    console.error('Failed to remove from localStorage:', e);
+  }
+}
+
 export function saveCredentials(credentials: SupabaseCredentials): void {
-  localStorage.setItem(SUPABASE_CREDENTIALS_KEY, JSON.stringify(credentials));
+  safeSetItem(SUPABASE_CREDENTIALS_KEY, JSON.stringify(credentials));
 }
 
 export function getCredentials(): SupabaseCredentials | null {
-  const stored = localStorage.getItem(SUPABASE_CREDENTIALS_KEY);
+  const stored = safeGetItem(SUPABASE_CREDENTIALS_KEY);
   if (!stored) return null;
   try {
     return JSON.parse(stored);
@@ -25,7 +50,7 @@ export function getCredentials(): SupabaseCredentials | null {
 }
 
 export function clearCredentials(): void {
-  localStorage.removeItem(SUPABASE_CREDENTIALS_KEY);
+  safeRemoveItem(SUPABASE_CREDENTIALS_KEY);
   supabaseInstance = null;
 }
 
@@ -37,14 +62,19 @@ export function getSupabase(): SupabaseClient | null {
   if (supabaseInstance) return supabaseInstance;
   
   const credentials = getCredentials();
-  if (!credentials) return null;
+  if (!credentials || !credentials.url || !credentials.key) return null;
   
-  supabaseInstance = createClient(credentials.url, credentials.key, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  });
+  try {
+    supabaseInstance = createClient(credentials.url, credentials.key, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+  } catch (e) {
+    console.error('Failed to create Supabase client:', e);
+    return null;
+  }
   
   return supabaseInstance;
 }

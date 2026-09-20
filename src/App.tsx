@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, createContext, useContext } from 'react';
 import Landing from './pages/Landing';
 import Messenger from './pages/Messenger';
@@ -29,7 +29,7 @@ function App() {
 
   return (
     <AppContext.Provider value={{ isAdminAuthenticated, setIsAdminAuthenticated, theme, setTheme }}>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/app" element={<Messenger />} />
@@ -40,7 +40,7 @@ function App() {
           } />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </AppContext.Provider>
   );
 }
